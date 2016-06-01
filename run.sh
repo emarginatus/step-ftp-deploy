@@ -55,9 +55,9 @@ echo "Boo yaka sha"
 
 debug "Test connection and list $DESTINATION files"
 #echo "curl -u $USERNAME:do_not_show_PASSWORD_in_log $DESTINATION/"
-echo "curl -u $USERNAME:$PASSWORD $DESTINATION/"
+echo "curl -u $USERNAME:$PASSWORD --basic --tlsv1 $DESTINATION/"
 echo "remove after testing"
-curl -u '$USERNAME:$PASSWORD' --basic $DESTINATION/
+curl -u '$USERNAME:$PASSWORD' --basic --tlsv1 $DESTINATION/
 
 debug "Calculating md5sum for local files"
 find . -type f -exec md5sum {} > $WERCKER_CACHE_DIR/local.txt \;

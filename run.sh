@@ -119,11 +119,11 @@ while read file_name; do
 done < $WERCKER_CACHE_DIR/changed.txt
 
 debug "Start removing files"
-#while read file_name; do
-#  echo $file_name
-#  curl -u $USERNAME:$PASSWORD -Q "-DELE $file_name" $DESTINATION/ > /dev/null || fail "$file_name does not exists on server. Please make sure your $REMOTE_FILE is synchronized."
-#  sed -i "\|\s$file_name$|d" $WERCKER_CACHE_DIR/remote.txt
-#  curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
-#done < $WERCKER_CACHE_DIR/removed.txt
+while read file_name; do
+  echo $file_name
+  curl -u $USERNAME:$PASSWORD -Q "-DELE $file_name" $DESTINATION/ > /dev/null || fail "$file_name does not exists on server. Please make sure your $REMOTE_FILE is synchronized."
+  sed -i "\|\s$file_name$|d" $WERCKER_CACHE_DIR/remote.txt
+  curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
+done < $WERCKER_CACHE_DIR/removed.txt
 
 success "Done."

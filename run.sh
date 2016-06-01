@@ -47,13 +47,10 @@ then
 fi
 debug "TIMEOUT is set to $TIMEOUT min. After that you should run this script again to complete all files. If wercker stops this script before TIMEOUT then it may happen that $REMOTE_FILE is not uploaded, so use short TIMEOUT (less than 25min)."
 
-curl -u testtest@abitofcode.com:testtest --tlsv1 ftp://ftp.abitofcode.com/ 
-
 debug "Test connection and list $DESTINATION files"
-#echo "curl -u $USERNAME:do_not_show_PASSWORD_in_log $DESTINATION/"
-echo "curl -u $USERNAME:$PASSWORD --tlsv1 $DESTINATION/"
-echo "remove after testing"
-curl -u $USERNAME:$PASSWORD --tlsv1 $DESTINATION
+echo "curl -u $USERNAME:do_not_show_PASSWORD_in_log $DESTINATION/"
+
+curl -u $USERNAME:$PASSWORD $DESTINATION
 
 debug "Calculating md5sum for local files"
 find . -type f -exec md5sum {} > $WERCKER_CACHE_DIR/local.txt \;
@@ -93,9 +90,9 @@ while read file_name; do
     fail "$file_name should exists"
   else
     echo $file_name
-    curl -u '$USERNAME:$PASSWORD' --ftp-create-dirs -T "$file_name" "$DESTINATION/$file_name" || fail "failed to push $file_name Please try again"
+    curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$file_name" "$DESTINATION/$file_name" || fail "failed to push $file_name Please try again"
     md5sum $file_name >> $WERCKER_CACHE_DIR/remote.txt
-    curl -u '$USERNAME:$PASSWORD' --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
+    curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
   fi
   if [ "$TIMEOUT" -le $(( ($(date +"%s") - $date_start) / 60 )) ];
   then
@@ -110,10 +107,10 @@ while read file_name; do
     fail "$file_name should exists"
   else
     echo $file_name
-    curl -u '$USERNAME:$PASSWORD' --ftp-create-dirs -T "$file_name" "$DESTINATION/$file_name" || fail "failed to push $file_name that probaably exists on server. Please try again."
+    curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$file_name" "$DESTINATION/$file_name" || fail "failed to push $file_name that probaably exists on server. Please try again."
     sed -i "\|\s$file_name$|d" $WERCKER_CACHE_DIR/remote.txt
     md5sum $file_name >> $WERCKER_CACHE_DIR/remote.txt
-    curl -u '$USERNAME:$PASSWORD' --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
+    curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
   fi
   if [ "$TIMEOUT" -le $(( ($(date +"%s") - $date_start) / 60 )) ];
   then
@@ -122,11 +119,11 @@ while read file_name; do
 done < $WERCKER_CACHE_DIR/changed.txt
 
 debug "Start removing files"
-while read file_name; do
-  echo $file_name
-  curl -u '$USERNAME:$PASSWORD' -Q "-DELE $file_name" $DESTINATION/ > /dev/null || fail "$file_name does not exists on server. Please make sure your $REMOTE_FILE is synchronized."
-  sed -i "\|\s$file_name$|d" $WERCKER_CACHE_DIR/remote.txt
-  curl -u '$USERNAME:$PASSWORD' --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
-done < $WERCKER_CACHE_DIR/removed.txt
+#while read file_name; do
+#  echo $file_name
+#  curl -u $USERNAME:$PASSWORD -Q "-DELE $file_name" $DESTINATION/ > /dev/null || fail "$file_name does not exists on server. Please make sure your $REMOTE_FILE is synchronized."
+#  sed -i "\|\s$file_name$|d" $WERCKER_CACHE_DIR/remote.txt
+#  curl -u $USERNAME:$PASSWORD --ftp-create-dirs -T "$WERCKER_CACHE_DIR/remote.txt" "$DESTINATION/$REMOTE_FILE" || fail "failed to push $REMOTE_FILE. It is not in sync anymore. Please remove all files from $DESTINATION and start again"
+#done < $WERCKER_CACHE_DIR/removed.txt
 
 success "Done."

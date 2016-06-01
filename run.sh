@@ -40,6 +40,9 @@ fi
 
 # since wercker in beta allows max 25 minuter per build
 # upload of large number of files can be separated
+
+DESTINATION="ftp://ftp.abitofcode.com/"
+
 TIMEOUT=20
 date_start=$(date +"%s")
 if [  -n "$WERCKER_FTP_DEPLOY_TIMEOUT" ]

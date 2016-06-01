@@ -51,7 +51,9 @@ debug "TIMEOUT is set to $TIMEOUT min. After that you should run this script aga
 echo "Boo yaka sha"
 
 debug "Test connection and list $DESTINATION files"
-echo "curl -u $USERNAME:do_not_show_PASSWORD_in_log $DESTINATION/"
+#echo "curl -u $USERNAME:do_not_show_PASSWORD_in_log $DESTINATION/"
+echo "curl -u $USERNAME:$PASSWORD $DESTINATION/"
+echo "remove after testing"
 curl -u '$USERNAME:$PASSWORD' --basic $DESTINATION/
 
 debug "Calculating md5sum for local files"

@@ -22,8 +22,10 @@ then
     fail "missing option \"password\", aborting"
 fi
 
+ls -la
 echo "Change Directory to $WERCKER_FTP_DEPLOY_SUBFOLDER"
 cd $WERCKER_FTP_DEPLOY_SUBFOLDER
+ls -la
 
 DESTINATION=$WERCKER_FTP_DEPLOY_DESTINATION
 USERNAME=$WERCKER_FTP_DEPLOY_USERNAME

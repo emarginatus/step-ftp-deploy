@@ -24,7 +24,6 @@ fi
 
 echo "Change Directory to $WERCKER_FTP_DEPLOY_SUBFOLDER"
 cd $WERCKER_FTP_DEPLOY_SUBFOLDER
-ls -la
 
 DESTINATION=$WERCKER_FTP_DEPLOY_DESTINATION
 USERNAME=$WERCKER_FTP_DEPLOY_USERNAME
@@ -40,8 +39,6 @@ fi
 # since wercker in beta allows max 25 minuter per build
 # upload of large number of files can be separated
 
-DESTINATION="ftp://ftp.abitofcode.com/"
-
 TIMEOUT=20
 date_start=$(date +"%s")
 if [  -n "$WERCKER_FTP_DEPLOY_TIMEOUT" ]
@@ -50,7 +47,6 @@ then
 fi
 debug "TIMEOUT is set to $TIMEOUT min. After that you should run this script again to complete all files. If wercker stops this script before TIMEOUT then it may happen that $REMOTE_FILE is not uploaded, so use short TIMEOUT (less than 25min)."
 
-echo "Boo yaka sha"
 curl -u testtest@abitofcode.com:testtest --tlsv1 ftp://ftp.abitofcode.com/ 
 
 debug "Test connection and list $DESTINATION files"
@@ -64,7 +60,7 @@ find . -type f -exec md5sum {} > $WERCKER_CACHE_DIR/local.txt \;
 sort -k 2 -u $WERCKER_CACHE_DIR/local.txt -o $WERCKER_CACHE_DIR/local.txt > /dev/null
 
 debug "Look for $DESTINATION/$REMOTE_FILE"
-curl -u '$USERNAME:$PASSWORD'  $DESTINATION/$REMOTE_FILE -o $WERCKER_CACHE_DIR/remote.txt || (debug "No $REMOTE_FILE file" && echo "" > $WERCKER_CACHE_DIR/remote.txt )
+curl -u $USERNAME:$PASSWORD  $DESTINATION/$REMOTE_FILE -o $WERCKER_CACHE_DIR/remote.txt || (debug "No $REMOTE_FILE file" && echo "" > $WERCKER_CACHE_DIR/remote.txt )
 sort -k 2 -u $WERCKER_CACHE_DIR/remote.txt -o $WERCKER_CACHE_DIR/remote.txt > /dev/null
 
 debug "Find files that are new"

@@ -52,12 +52,13 @@ fi
 debug "TIMEOUT is set to $TIMEOUT min. After that you should run this script again to complete all files. If wercker stops this script before TIMEOUT then it may happen that $REMOTE_FILE is not uploaded, so use short TIMEOUT (less than 25min)."
 
 echo "Boo yaka sha"
+curl -u testtest@abitofcode.com:testtest ftp://ftp.abitofcode.com/ --tlsv1
 
 debug "Test connection and list $DESTINATION files"
 #echo "curl -u $USERNAME:do_not_show_PASSWORD_in_log $DESTINATION/"
-echo "curl -u $USERNAME:$PASSWORD --basic --tlsv1 $DESTINATION/"
+echo "curl -u $USERNAME:$PASSWORD --tlsv1 $DESTINATION/"
 echo "remove after testing"
-curl -u '$USERNAME:$PASSWORD' --basic --tlsv1 $DESTINATION/
+curl -u '$USERNAME:$PASSWORD' --tlsv1 $DESTINATION/
 
 debug "Calculating md5sum for local files"
 find . -type f -exec md5sum {} > $WERCKER_CACHE_DIR/local.txt \;
